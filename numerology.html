@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Numerology Report Generator</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-weight: 600;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 16px 0;
+    border-radius: 8px;
+    border: none;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background: #ffb347;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #ffcc33;
+  }
+
+  .result {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.4);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+
+  td {
+    border: 3px solid #ffcc00;
+    text-align: center;
+    padding: 20px;
+    color: red;
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  hr {
+    border: 1px solid rgba(255,255,255,0.2);
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔮 Numerology Report Generator</h1>
+    <p>Enter your details to reveal your personalized numerology insights:</p>
+
+    <label>Full Name:</label>
+    <input type="text" id="name" placeholder="Enter your full name">
+
+    <label>Gender:</label>
+    <select id="gender">
+      <option value="">Select Gender</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+
+    <label>Date of Birth:</label>
+    <input type="date" id="dob">
+
+    <button onclick="generateReport()">Generate Detailed Report</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function sumDigits(num) {
+      while (num > 9) {
+        num = num.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+      }
+      return num;
+    }
+
+    function getMoolank(day) {
+      return sumDigits(day);
+    }
+
+    function getBhagyank(d, m, y) {
+      return sumDigits(d + m + y);
+    }
+
+    const meanings = {
+      1: "You are a born leader — confident, ambitious, and self-reliant. You love to take initiative and inspire others.",
+      2: "You are a peacemaker — emotional, cooperative, and sensitive. You thrive in harmony and partnerships.",
+      3: "You are creative and optimistic — full of joy, charm, and expression. Communication is your strength.",
+      4: "You are disciplined, dependable, and methodical. Hard work and structure define your success.",
+      5: "You are adventurous, freedom-loving, and curious. You adapt quickly and love new experiences.",
+      6: "You are responsible, caring, and artistic. You value love, beauty, and family deeply.",
+      7: "You are introspective and spiritual. You think deeply and value wisdom and truth.",
+      8: "You are ambitious, organized, and powerful. You are drawn to success, authority, and financial growth.",
+      9: "You are compassionate and humanitarian. You feel deeply connected to helping others and spreading kindness."
+    };
+
+    function generateReport() {
+      const name = document.getElementById("name").value.trim();
+      const gender = document.getElementById("gender").value;
+      const dob = document.getElementById("dob").value;
+
+      if (!name || !gender || !dob) {
+        alert("Please fill all details!");
+        return;
+      }
+
+      const dateObj = new Date(dob);
+      const d = dateObj.getDate();
+      const m = dateObj.getMonth() + 1;
+      const y = dateObj.getFullYear();
+
+      const moolank = getMoolank(d);
+      const bhagyank = getBhagyank(d, m, y);
+
+      // Lo Shu Grid
+      const allDigits = (d.toString() + m.toString() + y.toString()).split('').map(Number);
+      let gridCount = {1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]};
+      allDigits.forEach(num => {
+        if (num !== 0) gridCount[num].push(num);
+      });
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `
+        <h2>🧭 Detailed Numerology Report</h2>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Gender:</b> ${gender}</p>
+        <p><b>Date of Birth:</b> ${dob}</p>
+
+        <hr>
+        <p><b>🌞 Moolank (Root Number):</b> ${moolank}</p>
+        <p>${meanings[moolank]}</p>
+
+        <p><b>🌟 Bhagyank (Destiny Number):</b> ${bhagyank}</p>
+        <p>${meanings[bhagyank]}</p>
+
+        <hr>
+        <h3>🧮 Lo Shu Grid</h3>
+        <table>
+          <tr>
+            <td>${gridCount[3].join(' ') || '-'}</td>
+            <td>${gridCount[1].join(' ') || '-'}</td>
+            <td>${gridCount[9].join(' ') || '-'}</td>
+          </tr>
+          <tr>
+            <td>${gridCount[6].join(' ') || '-'}</td>
+            <td>${gridCount[7].join(' ') || '-'}</td>
+            <td>${gridCount[5].join(' ') || '-'}</td>
+          </tr>
+          <tr>
+            <td>${gridCount[2].join(' ') || '-'}</td>
+            <td>${gridCount[8].join(' ') || '-'}</td>
+            <td>${gridCount[4].join(' ') || '-'}</td>
+          </tr>
+        </table>
+
+        <p><b>Grid Interpretation:</b><br>
+        1 = Will Power | 2 = Cooperation | 3 = Creativity<br>
+        4 = Discipline | 5 = Freedom | 6 = Responsibility<br>
+        7 = Spirituality | 8 = Ambition | 9 = Compassion<br><br>
+        Missing numbers suggest areas for personal growth, while repeated numbers highlight strong traits.
+        </p>
+
+        <hr>
+        <h3>🧘 Deep Personality Summary</h3>
+        <p>
+        Your Root Number (${moolank}) defines your natural personality, while your Destiny Number (${bhagyank}) guides your life path.
+        Together, they create a balance of inner traits and outer destiny.  
+        ${meanings[moolank]}  
+        ${meanings[bhagyank]}
+        </p>
+
+        <p style="text-align:center; font-style:italic; color:#ffb347;">✨ This report is automatically generated based on ancient numerology principles. ✨</p>
+      `;
+    }
+  </script>
+</body>
+</html>
